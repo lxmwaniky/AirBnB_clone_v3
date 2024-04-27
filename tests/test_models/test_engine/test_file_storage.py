@@ -6,6 +6,7 @@ Contains the TestFileStorageDocs classes
 from datetime import datetime
 import inspect
 import models
+from random import choice
 from models.engine import file_storage
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -70,6 +71,7 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
@@ -113,3 +115,46 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    def test_count_when_empty(self):
+        """Test that the `count` method returns zero when nothing exists."""
+        self.assertTrue(models.storage.count() == 0)
+
+    def test_count_all_objects(self):
+        """Test that the `count` method returns the right number of objects."""
+        for model in classes.values():
+            models.storage.new(model())
+
+        self.assertEqual(models.storage.count(), len(classes))
+
+    def test_count_with_model_name(self):
+        """Test that the `count` method returns the right number of objects for
+        a particular class."""
+        for key, instance in classes.items():
+            with self.subTest(key=key, model=instance):
+                num_of_instances = choice(range(1, 20))
+                for _ in range(num_of_instances):
+                    instance_obj = instance()
+                    models.storage.new(instance_obj)
+
+                self.assertEqual(models.storage.count(
+                    instance_obj.__class__.__name__), num_of_instances)
+
+    def test_get_with_non_existent(self):
+        """Test that the `get` method returns None for non-existent objects."""
+        self.assertIsNone(models.storage.get(User, 'abcd-1234-test-5678'))
+
+    def test_get_with_class_only(self):
+        """Test that the `get` method operates correctly when only the class
+        argument is passed."""
+        self.assertIsNone(models.storage.get(User))
+
+    def test_get_with_valid_class(self):
+        """Test that the `get` method returns the right object."""
+        for key, instance in classes.items():
+            with self.subTest(key=key, model=instance):
+                instance_obj = instance()
+                models.storage.new(instance_obj)
+
+                self.assertEqual(models.storage.get(
+                    instance, instance_obj.id), instance_obj)
