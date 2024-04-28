@@ -1,39 +1,22 @@
 #!/usr/bin/python3
-
-"""Handles endpoints"""
-
-from flask import jsonify
-from api.v1.views import app_views
+"""module - index file"""
 from models import storage
+from flask import jsonify, Blueprint
+from api.v1.views import app_views
 
-
-@app_views.route("/status")
-def get_status():
-    """Returns the status of the API service."""
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
+def status_code():
+    """return status code"""
     return jsonify({"status": "OK"})
 
+@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+def count_objects():
+    """ count the number of objects in each class"""
+    classes = ['State', 'City', 'Amenity', 'Place', 'Review', 'User']
+    names = ['states', 'cities', 'amenities', 'places', 'review', 'users']
 
-@app_views.route("/stats")
-def get_stats():
-    """
-    Retrieves the number of objects by their type.
+    objects = {}
+    for i in range(len(classes)):
+        objects[names[i]] = storage.count(classes[i])
 
-    Returns:
-        A JSON response containing the count of objects for each type:
-        - amenities
-        - cities
-        - places
-        - reviews
-        - states
-        - users
-    """
-    return jsonify(
-        {
-            "amenities": storage.count('Amenity'),
-            "cities": storage.count('City'),
-            "places": storage.count('Place'),
-            "reviews": storage.count('Review'),
-            "states": storage.count('State'),
-            "users": storage.count('User')
-        }
-    )
+    return jsonify(objects)
