@@ -7,16 +7,18 @@ app = Flask(__name__)
 
 app.register_blueprint(app_views)
 
+
 @app.teardown_appcontext
 def teardown_appcontext(exception):
     """
     Function to be called when the application context is torn down.
     It closes the storage connection.
-    
+
     Args:
         exception: The exception that caused the teardown, if any.
     """
     storage.close()
+
 
 if __name__ == "__main__":
 
