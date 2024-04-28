@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""app"""
+"""This module creates a Flask app."""
 from flask import Flask, make_response, jsonify
 from models import storage
 from api.v1.views import app_views

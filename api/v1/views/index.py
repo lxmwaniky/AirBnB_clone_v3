@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""index"""
+"""This module creates a blueprint for the API views."""
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
