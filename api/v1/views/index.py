@@ -18,7 +18,14 @@ def status():
 
 @app_views.route('/stats', methods=['GET'])
 def count():
-    '''retrieves the number of each objects by type'''
+    '''Retrieves the number of each object by type.
+
+    This function counts the number of objects for each class in the 'classes' dictionary
+    and returns a JSON response with the count for each object type.
+
+    Returns:
+        A JSON response containing the count of each object type.
+    '''
     count_dict = {}
     for cls in classes:
         count_dict[cls] = storage.count(classes[cls])
