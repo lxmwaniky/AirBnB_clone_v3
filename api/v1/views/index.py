@@ -20,7 +20,8 @@ def status():
 def count():
     '''Retrieves the number of each object by type.
 
-    This function counts the number of objects for each class in the 'classes' dictionary
+    This function counts the number of objects for
+    each class in the 'classes' dictionary
     and returns a JSON response with the count for each object type.
 
     Returns:
