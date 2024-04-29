@@ -1,33 +1,30 @@
 #!/usr/bin/python3
-"""This module creates a blueprint for the API views."""
-from api.v1.views import app_views
+"""This module implement a rule that returns the status of the application"""
 from flask import jsonify
-from models import storage
+import models
+from api.v1.views import app_views
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
 
-classes = {"users": "User", "places": "Place", "states": "State",
-           "cities": "City", "amenities": "Amenity",
-           "reviews": "Review"}
+@app_views.route("/status", strict_slashes=False)
+def view_status():
+    """View function that return a json message"""
+    return jsonify({"status": "OK"})
 
 
-@app_views.route('/status', methods=['GET'])
-def status():
-    ''' routes to status page '''
-    return jsonify({'status': 'OK'})
-
-
-@app_views.route('/stats', methods=['GET'])
-def count():
-    '''Retrieves the number of each object by type.
-
-    This function counts the number of objects for
-    each class in the 'classes' dictionary
-    and returns a JSON response with the count for each object type.
-
-    Returns:
-        A JSON response containing the count of each object type.
-    '''
-    count_dict = {}
-    for cls in classes:
-        count_dict[cls] = storage.count(classes[cls])
-    return jsonify(count_dict)
+@app_views.route("/stats", strict_slashes=False)
+def view_stats():
+    """Veiw function that retrieves the number of each object by type"""
+    return jsonify({
+        "amenities": models.storage.count(Amenity),
+        "cities": models.storage.count(City),
+        "places": models.storage.count(Place),
+        "reviews": models.storage.count(Review),
+        "states": models.storage.count(State),
+        "users": models.storage.count(User)
+    })
